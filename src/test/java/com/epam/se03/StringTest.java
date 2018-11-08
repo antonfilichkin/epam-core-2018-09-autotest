@@ -60,7 +60,7 @@ class StringTest {
     void splitStar() {
         String input = "1,2";
 
-        String[] parts = input.split(",*");
+        String[] parts = input.split(",");
 
         System.out.println(Arrays.toString(parts));
 
