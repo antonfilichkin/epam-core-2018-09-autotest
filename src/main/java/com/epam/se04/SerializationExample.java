@@ -27,6 +27,11 @@ public class SerializationExample {
             ByteArrayInputStream is = new ByteArrayInputStream(bArray);
             ObjectInputStream ois = new ObjectInputStream(is);
             Object objRead = ois.readObject();
+
+            Integer deserializedObject = (Integer) objRead;
+
+            System.out.println(objSave.equals(deserializedObject));
+
             // проверяем идентичность объектов
             System.out.println("readed object is: " + objRead.toString());
             System.out.println("Object equality is: "
