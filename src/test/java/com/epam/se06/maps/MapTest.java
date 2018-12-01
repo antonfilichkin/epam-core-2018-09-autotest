@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
@@ -14,12 +15,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 class MapTest {
 
@@ -99,6 +104,17 @@ class MapTest {
         map.put(a1, "value");
         assertNotNull(map.get(a1));
         assertNull(map.get(a2));
+    }
+
+    @Test
+    void containsEntryWithCondition() {
+        Map<String, Integer> source = new HashMap<>();
+
+//        source.put("World1", 80);
+        source.put("Hello1", 42);
+        source.put("Hello2", 73);
+
+        assertThat(source, hasEntry(startsWith("World"), greaterThan(50)));
     }
 }
 
