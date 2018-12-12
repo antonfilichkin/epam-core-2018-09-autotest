@@ -14,9 +14,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -115,6 +119,61 @@ class MapTest {
         source.put("Hello2", 73);
 
         assertThat(source, hasEntry(startsWith("World"), greaterThan(50)));
+    }
+
+    @Test
+    void putIf() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("1", 1);
+        map.put("2", 2);
+
+        // "1" -> 11
+        if (!map.containsKey("1")) {
+            map.put("1", 11);
+        }
+        assertThat(map, hasEntry("1", 1));
+
+        map.putIfAbsent("1", 11);
+        assertThat(map, hasEntry("1", 1));
+
+        map.computeIfAbsent("3", Integer::valueOf);
+        assertThat(map, hasEntry("3", 3));
+
+        map.computeIfAbsent("3", string -> Integer.valueOf(string + string));
+        assertThat(map, hasEntry("3", 3));
+
+        map.computeIfPresent("3", (key, prev) -> prev + 1);
+        assertThat(map, hasEntry("3", 4));
+
+        map.compute("4", (key, prev) -> prev == null ? 42 : 0);
+        assertThat(map, hasEntry("4", 42));
+
+        map.compute("4", (key, prev) -> prev == null ? 42 : 0);
+        assertThat(map, hasEntry("4", 0));
+
+        map.replaceAll((key, value) -> -value);
+        assertThat(map, both(hasEntry("1", -1)).and(hasEntry("3", -4)));
+
+        map.forEach((key, value) -> System.out.println(key + " " + value));
+
+        Integer val = map.getOrDefault("195", 195);
+        assertThat(val, is(195));
+    }
+
+    @Test
+    void mergeMaps() {
+        Map<String, Integer> map1 = new HashMap<>();
+        map1.put("1", 1);
+        map1.put("2", 2);
+
+        Map<String, Integer> map2 = new HashMap<>();
+        map2.put("1", 1);
+        map2.put("3", 3);
+        map2.put("4", 4);
+
+        Map<String, Integer> map3 = new HashMap<>(map2);
+        map1.forEach((key, value) -> map3.merge(key, value, Integer::sum));
+//        map1.forEach((key1, value) -> map3.compute(key1, (key, prev) -> value + (prev == null ? 0 : prev)));
     }
 }
 
